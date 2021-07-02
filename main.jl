@@ -30,11 +30,13 @@ end
 function score(porcentajes, letras, caracterSegundaCadena) #no se si esta dando lo que tiene que dar
     score = 0
     #por ser recursiva siempre estamos trabajando con la ultima columna del profile y la ultima letra del string (n y m)
-    for j in size(porcentajes)[1]
+    for (j, porcentaje) in enumerate(porcentajes)
         score = score + porcentajes[j] * compararEnMatriz(letras[j],caracterSegundaCadena) # ej 0.3 * -4
     end
     return score
 end
+
+score([0.25, 0.5, 0.25],["A", "G", "C"], "G")
 
 function scoregap(porcentajes, letras)
      score = 0
@@ -80,16 +82,7 @@ function actualizarProfile(profilePorcentajes, profileCadena, cadena) #devuelve 
     return (nuevoProfilePorcentajes, nuevaProfileCadena)
 end
 
-actualizarProfile([[0.2, 0.3, 0.25, 0.25]], [["A", "C", "G", "T"]], "A")
-
-function generarProfileInicial(string)
-    profile = []
-    for letter in string
-        profile = push!(profile, (letter, 1))
-    end
-
-    return profile
-end
+#actualizarProfile([[0.2, 0.3, 0.25, 0.25]], [["A", "C", "G", "T"]], "A")
 
 function compararEnMatriz(letra1, letra2)
     letrasYPosiciones = Dict("A" => 1, "T" => 2, "G" => 3, "C" => 4)
