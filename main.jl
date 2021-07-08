@@ -13,9 +13,9 @@ function needle_top_down(profilePorcentajes, profileCadena, str2, m, n, W)
 
     #falta actualizar los porcentajes para llamar a las recursiones
     W[m, n] = max(
-            needle_top_down(profilePorcentajes, profileCadena, str2, m-1, n, W) + sii(str2[n]=="_", 0, -1) ,
+            needle_top_down(profilePorcentajes, profileCadena, str2, m-1, n, W) + sii(str2[n]=="_", 0, -1) , #gap contra gap es 0 y gap contra letra es -1
             needle_top_down(profilePorcentajes, profileCadena, str2, m, n-1, W) + scoregap(profilePorcentajes[n], profileCadena[n]), #ver cuanto vale gap
-            needle_top_down(profilePorcentajes, profileCadena, str2, m-1, n-1, W) + score(profilePorcentajes[n], profileCadena[n], str2[m]) #match
+            needle_top_down(profilePorcentajes, profileCadena, str2, m-1, n-1, W) + score(profilePorcentajes[n], profileCadena[n], str2[m])
     )
 end
 
@@ -40,8 +40,8 @@ score([0.25, 0.5, 0.25],["A", "G", "C"], "G")
 
 function scoregap(porcentajes, letras)
      score = 0
-     for j in size(porcentajes)[1]
-         score = score + porcentajes[j] * sii(letras[j]=="_", 0, -1)
+     for (j, porcentaje) in enumerate(porcentajes)
+         score = score + porcentajes[j] * sii(letras[j]=="_", 0, -1) # clase con pato: actualiza los porcentajes del profile dependiendo de SI YA ERAN UN GAP O NO
     end
 end
 
@@ -56,20 +56,17 @@ function actualizarProfile(profilePorcentajes, profileCadena, cadena) #devuelve 
         nuevoCaracterAAgregar = string(cadena[columnaIndex]) #letrita a agregar
         nuevosPorcentajesColumna = []
 
-        for porcentaje in porcentajesColumna
+        for porcentaje in porcentajesColumna #recorro todos los items de la columna
             nuevosPorcentajesColumna = push!(nuevosPorcentajesColumna, porcentaje/2) #divido los porcentajes en 2
         end
 
         if(nuevoCaracterAAgregar in cadenaColumna)
-            print("entre al if")
             stringCadena = join(cadenaColumna) #uno la columna del perfil ej "ACG"
             indiceCaracterExistente = findfirst(nuevoCaracterAAgregar, stringCadena) #encuentro el indice del caracter
             nuevosPorcentajesColumna[indiceCaracterExistente[1]] = nuevosPorcentajesColumna[indiceCaracterExistente[1]] + 0.5 #actualizo el porcentaje en ese indice
             nuevaCadenaColumna = cadenaColumna
         else
-            nuevosPorcentajesColumna = push!(nuevosPorcentajesColumna, 0.5)
-            print(cadenaColumna)
-            print(nuevoCaracterAAgregar) #agrego porcentaje de letra nueva
+            nuevosPorcentajesColumna = push!(nuevosPorcentajesColumna, 0.5) #agrego el nuevo porcentaje
             nuevaCadenaColumna = push!(cadenaColumna, nuevoCaracterAAgregar) #agrego la letra
         end
 
