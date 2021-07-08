@@ -8,11 +8,11 @@ function inicializarProfile(cadena) #inicializa un nuevo profile con todos los p
     profilePorcentajes = []
     profileCadenas = []
     for (columnaIndex, columa) in enumerate(cadena)
-        profilePorcentajes = push!(profilePorcentajes, 1)
-        profileCadenas = push!(profileCadenas, string(cadena[columnaIndex]))
+        profilePorcentajes = push!(profilePorcentajes, [1])
+        profileCadenas = push!(profileCadenas, [string(cadena[columnaIndex])])
     end
 
-    return Profile([profilePorcentajes], [profileCadenas])
+    return Profile(profilePorcentajes, profileCadenas)
 end
 
 function actualizarProfile(profile, cadena) #devuelve un nuevo profile con los porcentajes actualizados
@@ -53,8 +53,17 @@ function largoProfile(profile) #devuelve el largo del profile (cantidad de colum
     return size(profile.profilePorcentajes)[1]
 end
 
+function obtenerPorcentajesColumna(profile, numeroDeColumna)
+    return profile.profilePorcentajes[numeroDeColumna]
+end
+
+function obtenerCadenaColumna(profile, numeroDeColumna)
+    return profile.profileCadenas[numeroDeColumna]
+end
+
 profile = Profile([[0.75, 0.25],[0.5, 0.5]],
                   [["A", "C"], ["B", "-"]])
+
 res = actualizarProfile(profile, "GE")
 
 res2 = actualizarProfile(res, "ZW")
