@@ -1,10 +1,10 @@
-include("needleman.jl")
 include("profile.jl")
+include("needleman.jl")
 
-str1 = "AAAA"
+str1 = "AGTA"
 profile = inicializarProfile(str1)
 
-str2 = "AAAA"
+str2 = "AGTA"
 m = length(str1)
 n = length(str2)
 
