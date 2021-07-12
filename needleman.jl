@@ -10,7 +10,7 @@ function needle_top_down(profile, str2, m, n, W)
         return m * -1
     end
 
-    if W[m, n] != typemin(Int64)
+    if W[m, n] != typemin(Float64)
         return W[m, n]
     end
 

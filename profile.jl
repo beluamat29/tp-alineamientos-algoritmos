@@ -68,7 +68,7 @@ function agregarColumnaDeGaps(profile, numeroColumna)
 end
 
 function imprimirProfile(profile)
-    pr
+    
 end
 
 

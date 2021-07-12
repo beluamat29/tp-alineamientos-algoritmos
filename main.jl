@@ -15,10 +15,10 @@ function agregarStringVacioAMatriz(W, cantidadFilas, cantidadColumnas)
 end
 
 
-str1 = "CGAGGG"
+str1 = "GTT"
 profile = inicializarProfile(str1)
 
-str2 = "CGTAA"
+str2 = "AAGTT"
 m = length(str1)
 n = length(str2)
 
