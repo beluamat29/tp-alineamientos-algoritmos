@@ -56,9 +56,13 @@ function scoreColumna(profile, numeroColumna, caracterSegundaCadena) #no se si e
     return scoreDeColumna
 end
 
-function scoregap(porcentajes, letras)
-     score = 0
-     for (j, porcentaje) in enumerate(porcentajes)
-         score = score + porcentajes[j] * sii(letras[j]=="_", 0, -1) # clase con pato: actualiza los porcentajes del profile dependiendo de SI YA ERAN UN GAP O NO
+function scoregap(profile, numeroColumna)
+    scoreDeColumna = 0
+    #por ser recursiva siempre estamos trabajando con la ultima columna del profile y la ultima letra del string (n y m)
+    profileColumna = profile.profileCadenas[numeroColumna]
+
+    for (j, porcentaje) in enumerate(profile.profilePorcentajes[numeroColumna]) #recorrido vertical
+        scoreDeColumna = scoreDeColumna + (porcentaje * sii(profileColumna[j]=="-", 0, -1)) # clase con pato: actualiza los porcentajes del profile dependiendo de SI YA ERAN UN GAP O NO
     end
+    return scoreDeColumna
 end

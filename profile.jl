@@ -61,11 +61,24 @@ function obtenerCadenaColumna(profile, numeroDeColumna)
     return profile.profileCadenas[numeroDeColumna]
 end
 
-profile = Profile([[0.75, 0.25],[0.5, 0.5]],
-                  [["A", "C"], ["B", "-"]])
+function agregarColumnaDeGaps(profile, numeroColumna)
+    nuevosPorcentajes = vcat(profile.profilePorcentajes[1: numeroColumna - 1], [[1]], profile.profilePorcentajes[numeroColumna : end])
+    nuevasCadenas = vcat(profile.profileCadenas[1: numeroColumna - 1], [["-"]], profile.profileCadenas[numeroColumna : end])
+    return Profile(nuevosPorcentajes, nuevasCadenas)
+end
 
+function imprimirProfile(profile)
+    println(profile.profileCadenas)
+end
+
+
+profilee = Profile([[0.5, 0.5], [1], [0.5, 0.25, 0.25]],
+                  [["B", "-"], ["G"], ["G", "T", "A"]])
+
+largoProfile(profilee)
+agregarColumnaDeGaps(profilee, 1)
+
+imprimirProfile(profile)
 res = actualizarProfile(profile, "GE")
 
 res2 = actualizarProfile(res, "ZW")
-
-largoProfile(res2)

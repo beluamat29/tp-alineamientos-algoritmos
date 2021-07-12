@@ -1,14 +1,13 @@
 include("profile.jl")
 include("needleman.jl")
+include("reconstruccion.jl")
 
 function agregarStringVacioAMatriz(W, cantidadFilas, cantidadColumnas)
-    println(cantidadFilas)
-    println(cantidadColumnas)
-    for m in 0:cantidadFilas - 1
+    for m in 0:cantidadFilas -1
         W[m + 1, 1] = -1 * m
     end
 
-    for j in 0:cantidadColumnas - 1
+    for j in 0:cantidadColumnas -1
         W[1, j + 1] = -1 * j
     end
 
@@ -16,15 +15,15 @@ function agregarStringVacioAMatriz(W, cantidadFilas, cantidadColumnas)
 end
 
 
-str1 = "ACGT"
+str1 = "CGAGGG"
 profile = inicializarProfile(str1)
 
-str2 = "GGAAGT"
+str2 = "CGGGGT"
 m = length(str1)
 n = length(str2)
 
-W = fill(typemin(Int64), m , n )
+W = fill(typemin(Int64), m, n)
 needle_top_down(profile, str2, m, n, W)
 W
-
-#reconstruccion_top_down(str1, str2, W)
+#agregarStringVacioAMatriz(W, m , n)
+reconstruccion_top_down(profile, str2, W)
