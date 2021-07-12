@@ -1,3 +1,4 @@
+include("profile.jl")
 function reconstruccion_top_down(profile, str2,  W)
     alineado_1 = profile
     alineado_2 = str2
@@ -54,6 +55,6 @@ function reconstruccion_top_down(profile, str2,  W)
 
     end
 
-    return (alineado_1, alineado_2)
+    return (alineado_1, alineado_2, actualizarProfile(alineado_1, alineado_2))
 
 end

@@ -18,12 +18,23 @@ end
 str1 = "CGAGGG"
 profile = inicializarProfile(str1)
 
-str2 = "CGGGGT"
+str2 = "CGTAA"
 m = length(str1)
 n = length(str2)
 
-W = fill(typemin(Int64), m, n)
+W = fill(typemin(Float64), m, n)
 needle_top_down(profile, str2, m, n, W)
 W
 #agregarStringVacioAMatriz(W, m , n)
-reconstruccion_top_down(profile, str2, W)
+reconstruccion = reconstruccion_top_down(profile, str2, W)
+
+segundoProfile = reconstruccion[3]
+str3 = "AAGATGGAT"
+m = largoProfile(segundoProfile)
+n = length(str3)
+
+W = fill(typemin(Float64), m, n)
+needle_top_down(segundoProfile, str3, m, n, W)
+W
+#agregarStringVacioAMatriz(W, m , n)
+reconstruccion = reconstruccion_top_down(segundoProfile, str3, W)

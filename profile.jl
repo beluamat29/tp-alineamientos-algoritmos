@@ -68,17 +68,9 @@ function agregarColumnaDeGaps(profile, numeroColumna)
 end
 
 function imprimirProfile(profile)
-    println(profile.profileCadenas)
+    pr
 end
 
 
 profilee = Profile([[0.5, 0.5], [1], [0.5, 0.25, 0.25]],
                   [["B", "-"], ["G"], ["G", "T", "A"]])
-
-largoProfile(profilee)
-agregarColumnaDeGaps(profilee, 1)
-
-imprimirProfile(profile)
-res = actualizarProfile(profile, "GE")
-
-res2 = actualizarProfile(res, "ZW")
