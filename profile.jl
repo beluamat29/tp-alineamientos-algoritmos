@@ -68,9 +68,15 @@ function agregarColumnaDeGaps(profile, numeroColumna)
 end
 
 function imprimirProfile(profile)
-    
+    for columna in profile.profileCadenas
+        for char in columna
+            print(char)
+            print("\n")
+        end
+    end
 end
 
 
 profilee = Profile([[0.5, 0.5], [1], [0.5, 0.25, 0.25]],
                   [["B", "-"], ["G"], ["G", "T", "A"]])
+imprimirProfile(profilee)
