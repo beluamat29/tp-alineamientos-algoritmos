@@ -70,4 +70,4 @@ function encontrarMejorSecuenciaQueSigue(secuencias, profile)
     return (mejorSecuencia, scoreMejorSecuencia, matrizDeAlineamientoConMejorSecuencia)
 end
 
-alineamientoGreedy(["AACGT", "AAA", "GTT", "AAGTT", "AAGTA", "GGGTT", "A", "CCCGA"])
+alineamientoGreedy(["AAC-GT", "AAA", "G-TT", "AAGTT", "AAGTA", "GGG--TT", "A-", "CCCGA"])
