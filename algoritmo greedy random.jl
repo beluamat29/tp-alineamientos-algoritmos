@@ -5,23 +5,23 @@ include("algoritmo greedy.jl")
 
 using(Combinatorics)
 
-function algoritmoGreedyRandom(secuencias) #elegimos al azar entre algunas de las mejores
+function algoritmoGreedyRandom(secuencias) #elegimos al azar entre algunas de las mejores. largo(secuencias) debe ser >= 2
     #BUGIMPORTANTEEEE: No puede haber dos secuencias iguales :(
-    primerasNMejores = encontrarNMejoresPares(secuencias, lenght(secuencias)/2) #ESTO DEBERIA SER LEN(SECUENCIAS)/2
-    primerParRandom = primerasNMejores[rand(1:end)] #elijo un par al azar dentro de los n/2 mejores
+    primerasNMejores = encontrarNMejoresPares(secuencias, length(secuencias)/2) #me quedo con la mejor mitad
+    primerParRandom = primerasNMejores[rand(1:end)] #elijo un par al azar dentro de los mejores
 
     listaDeSecuencias = eliminarSecuenciaDeLista(primerParRandom[1],secuencias)
     listaDeSecuencias = eliminarSecuenciaDeLista(primerParRandom[2],secuencias)
 
     profile = armarProfileInicial(primerParRandom)[3] #profile con el que arranca el algoritmo
 
-    while(listaDeSecuencias !== []) #mientras queden secuencias por alinear
-        mejoresSecuencias = encontrarNMejoresSecuencias(listaDeSecuencias, profile, lenght(listaDeSecuencias)/2)
+    while(listaDeSecuencias != []) #mientras queden secuencias por alinear
+        mejoresSecuencias = encontrarNMejoresSecuencias(listaDeSecuencias, profile, length(listaDeSecuencias)/2)
         lProfile = largoProfile(profile)
         string2 = mejoresSecuencias[rand(1:end)] #elijo una secuencia al azar dentro de las n/2 mejores
         W = fill(typemin(Float64), lProfile, length(string2))
         scorePar = needle_top_down(profile, string2, lProfile, length(string2), W)
-        profile = reconstruccion_top_down(profile, string2, W) #alineo el profile vs la cadena seleccionada
+        profile = reconstruccion_top_down(profile, string2, W)[3] #alineo el profile vs la cadena seleccionada
 
         listaDeSecuencias = eliminarSecuenciaDeLista(string2, listaDeSecuencias)
     end
@@ -33,7 +33,7 @@ function encontrarNMejoresPares(secuencias, cantidadMejores)
     listaDePares = collect(combinations(secuencias, 2)) #formo todos los pares
     mejoresPares = [] #aun no tengo mi mejor par
 
-    while(length(mejoresPares) !== cantidadMejores && listaDePares !== []) #tengo que buscar al mejor par pero N veces
+    while(length(mejoresPares) < cantidadMejores) #tengo que buscar al mejor par pero N veces
         mejorPar = nothing
         scoreMejorPar = typemin(Float64)
 
@@ -56,6 +56,8 @@ function encontrarNMejoresPares(secuencias, cantidadMejores)
     return mejoresPares #retorno los cantidadMejores pares
 end
 
+#encontrarNMejoresPares(["AACGT", "GTT", "AAGTT", "AAGTA", "GGGTT", "AA", "CCCGA", "GGTAC"], 4)
+
 function eliminarParDeListaDePares(mejorPar, listaDePares)
     return filter!(par -> (par[1] !== mejorPar[1]) || (par[2] !== mejorPar[2]), listaDePares)
 end
@@ -70,15 +72,19 @@ function armarProfileInicial(par)
 end
 
 function encontrarNMejoresSecuencias(listaDeSecuencias, profile, cantidad)
+    copiaSecuencias = copy(listaDeSecuencias) #porque si no me las saca de la lista original
     mejoresSecuencias = []
     contador = cantidad
 
-    while(contador != 0)
-        mejorSecuenciaQueSigue = encontrarMejorSecuenciaQueSigue(listaDeSecuencias, profile)[1]
-        listaSecuencias = eliminarSecuenciaDeLista(mejorSecuenciaQueSigue, listaSecuencias)
+    while(contador > 0)
+        mejorSecuenciaQueSigue = encontrarMejorSecuenciaQueSigue(copiaSecuencias, profile)[1]
+        mejoresSecuencias = push!(mejoresSecuencias, mejorSecuenciaQueSigue)
+        listaDeSecuencias = eliminarSecuenciaDeLista(mejorSecuenciaQueSigue, copiaSecuencias)
         contador -= 1
     end
 
     return mejoresSecuencias
 end
-algoritmoGreedyRandom(["AACGT", "GTT", "AAGTT", "AAGTA", "GGGTT", "AA", "CCCGA"], 7)
+#profile = Profile(Any[Any[1.0], Any[1.0], Any[1.0], Any[1.0], Any[0.5, 0.5]], Any[["A"], ["A"], ["G"], ["T"], ["T", "A"]])
+
+algoritmoGreedyRandom(["AACGT", "GTT", "AAGTT", "AAGTA", "TTAG", "GA", "CCCTAGG", "CGTAC"])
