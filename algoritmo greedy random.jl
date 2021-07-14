@@ -87,4 +87,5 @@ function encontrarNMejoresSecuencias(listaDeSecuencias, profile, cantidad)
 end
 #profile = Profile(Any[Any[1.0], Any[1.0], Any[1.0], Any[1.0], Any[0.5, 0.5]], Any[["A"], ["A"], ["G"], ["T"], ["T", "A"]])
 
-algoritmoGreedyRandom(["AACGT", "GTT", "AAGTT", "AAGTA", "TTAG", "GA", "CCCTAGG", "CGTAC"])
+profile = algoritmoGreedyRandom(["AACGT", "GTT", "AAGTT", "AAGTA", "TTAG", "GA", "CCCTAGG", "CGTAC"])
+imprimirProfile(profile)

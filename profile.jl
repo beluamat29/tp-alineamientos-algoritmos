@@ -67,16 +67,27 @@ function agregarColumnaDeGaps(profile, numeroColumna)
     return Profile(nuevosPorcentajes, nuevasCadenas)
 end
 
-function imprimirProfile(profile)
-    for columna in profile.profileCadenas
-        for char in columna
-            print(char)
-            print("\n")
+function cantidadDeFilas(profile)
+    altoMaximo = 0
+    for columna in profile.profilePorcentajes
+        if length(columna) > altoMaximo
+            altoMaximo = length(columna)
         end
     end
+
+    return altoMaximo
 end
 
-
-profilee = Profile([[0.5, 0.5], [1], [0.5, 0.25, 0.25]],
-                  [["B", "-"], ["G"], ["G", "T", "A"]])
-imprimirProfile(profilee)
+function imprimirProfile(profile)
+    altoProfile =  cantidadDeFilas(profile)
+    for numeroFila in 1:altoProfile
+        for columna in 1:largoProfile(profile)
+            if(numeroFila <= length(profile.profileCadenas[columna]))
+                print(profile.profileCadenas[columna][numeroFila], " ")
+            else
+                print("  ")
+            end
+        end
+        print("\n")
+    end
+end
