@@ -13,16 +13,17 @@ function algoritmoGreedyRandom(secuencias) #elegimos al azar entre algunas de la
     listaDeSecuencias = eliminarSecuenciaDeLista(primerParRandom[1],secuencias)
     listaDeSecuencias = eliminarSecuenciaDeLista(primerParRandom[2],secuencias)
 
-    profile = armarProfileInicial(primerParRandom)[2] #profile con el que arranca el algoritmo
-    score = 0
+    profileInicial = armarProfileInicial(primerParRandom)
+    profile = profileInicial[2] #profile con el que arranca el algoritmo
+    score = profileInicial[1]
     while(listaDeSecuencias != []) #mientras queden secuencias por alinear
         mejoresSecuencias = encontrarNMejoresSecuencias(listaDeSecuencias, profile, length(listaDeSecuencias)/2)
         lProfile = largoProfile(profile)
         string2 = mejoresSecuencias[rand(1:end)] #elijo una secuencia al azar dentro de las n/2 mejores
         W = fill(typemin(Float64), lProfile, length(string2))
         score += needle_top_down(profile, string2, lProfile, length(string2), W)
-        profile = reconstruccion_top_down(profile, string2, W)[3] #alineo el profile vs la cadena seleccionada
-
+        reconstruccion = reconstruccion_top_down(profile, string2, W) #alineo el profile vs la cadena seleccionada
+        profile = reconstruccion[3]
         listaDeSecuencias = eliminarSecuenciaDeLista(string2, listaDeSecuencias)
     end
 
@@ -88,5 +89,5 @@ function encontrarNMejoresSecuencias(listaDeSecuencias, profile, cantidad)
 end
 #profile = Profile(Any[Any[1.0], Any[1.0], Any[1.0], Any[1.0], Any[0.5, 0.5]], Any[["A"], ["A"], ["G"], ["T"], ["T", "A"]])
 
-profile = algoritmoGreedyRandom(["AACGT", "GTT", "AAGTT", "AAGTA", "TTAG", "CCCTAGG", "CGTAC"])
-imprimirProfile(profile)
+res = algoritmoGreedyRandom(["AACGT", "CGTAC", "AAAAAAT", "TGCAG", "TTAACG", "GGGATTA"])
+imprimirProfile(res[2])

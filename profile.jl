@@ -73,7 +73,7 @@ function agregarColumnaDeGaps(profile, numeroColumna)
 end
 
 function cantidadDeFilas(profile)
-    return profile.profileListaDeCadenas
+    return length(profile.profileListaDeCadenas)
 end
 
 function imprimirProfile(profile)
@@ -83,7 +83,7 @@ function imprimirProfile(profile)
             if(numeroFila <= length(profile.profileCadenas[columna]))
                 print("|",profile.profileCadenas[columna][numeroFila], "|")
             else
-                print("| |")
+                print("|", profile.profileCadenas[columna][end], "|")
             end
         end
         print("\n")
