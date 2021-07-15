@@ -7,10 +7,10 @@ using(Combinatorics)
 
 function alineamientoGreedy(secuencias, matrizDeCostoEIndices)
     mejorParInicial = encontrarMejorParInicial(secuencias, matrizDeCostoEIndices) #buscamos los dos que mejor score tienen para empezar
-    profileOriginal = mejorParInicial[3]
-    string2 = mejorParInicial[4]
+    profileOriginal = inicializarProfile(mejorParInicial[1][1])
+    string2 = mejorParInicial[1][2]
     W = fill(typemin(Float64), largoProfile(profileOriginal), length(string2))
-    score =needle_top_down(profileOriginal, string2, largoProfile(profileOriginal), length(string2), W, matrizDeCostoEIndices)
+    score = needle_top_down(profileOriginal, string2, largoProfile(profileOriginal), length(string2), W, matrizDeCostoEIndices)
     profileOriginal = reconstruccion_top_down(profileOriginal, string2, W)[3] #armo el primer profile con el resultado del mejor par
 
     ###TERMINA INICIALIZACION DE PROFILE INICIAL###
@@ -49,7 +49,7 @@ function encontrarMejorParInicial(secuencias, matrizDeCostoEIndices)
         end
     end
 
-    return (mejorPar, scoreMejorPar, mejorProfile, mejorString2)
+    return (mejorPar, scoreMejorPar)
 end
 
 function eliminarSecuenciaDeLista(secuenciaAEliminar, listaSecuencias)
@@ -78,16 +78,7 @@ function encontrarMejorSecuenciaQueSigue(secuencias, profile, matrizDeCostoEIndi
 end
 
 p = alineamientoGreedy([
-"LCQGTSNKLTQLGTFEDHFLSLRRMFNNCEVVLGNLEITYVQKNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNMYYENSYALAVLSNYGTNKSGLRELPMRSLQEVL",
-"VCQGTSNRLTQLGTFEDHFLSLQRMFNNCEVVLGNLEITYMQRNYDLSFLKTIQEVAGYVLIALNTVEKIPLENLQIIRGNVLYENTHALSVLSNYGSNKTGLQELPLRNLHEIL",
-"IILVQICQGTSNRLTQLGTFEDHFLSLQRMFNNCEVVLGNLEITYMQKNYDLSFLKTIQEVAGYVLIALNTVEKIPLENLQIIRGNVLYENTHALSVLSNYGANKVGLRELPMRNLQEIL",
-"FCQGTSNKLTQLGTFEDHFLSLQRMFNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNLLYENTYALAVLSNYGANKTGVKELPMRNLQEIL",
-"VCQGTSNKLTQLGTFEDHFLSLQRMFNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNMYYENSYALAVLSNYDANKTGLKELPMRNLQEIL",
-"LEEKKVCQGTSNKLTQLGTFEDHFLSLQRMFNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNMYYENSYALAVLSNYDANKTGLKELPMRNLQEIL",
-"MFNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNMYYENSYALAVLSNYDANKTGLKELPMRNLQEIL",
-"LEEKKVCQGTSNKLTQLGTFEDHFLSLQRMFNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNMYYENSYALAVLSNYDANKTGLKELPMRNLQEIL",
-"FLPSLVCQGTSNKLTQLGTFEDHFVSLQRMFNNCEVVLGNLEITYVQKNYDLSFLKTIQEVAGYVLIALNAVEKIPLENLQVIRGNVLYENFYALSVLSNYDVNKTGVKELPMRNLLEIL",
-"LASGICQGTGNKLTQLGTLDDHFLSLQRMYNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNSVETIPLVNLQIIRGNVLYEGFALAVLSNYGMNKTGLKELPMRNLLEIL"
+"LCQGTS", "LCTS", "CGLTS", "AT"
 ], matrizDeAminoacidos())
 
 imprimirProfile(p[2])

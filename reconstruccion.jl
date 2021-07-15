@@ -1,6 +1,6 @@
 include("profile.jl")
 function reconstruccion_top_down(profile, str2,  W)
-    profile = agregarCadenaAListaDeCadenas(profile, str2)
+
     alineado_1 = profile
     alineado_2 = str2
     m = largoProfile(profile)
@@ -23,9 +23,11 @@ function reconstruccion_top_down(profile, str2,  W)
                 if(gap_en_str2_mayor_mismatch)
 
                     if n == length(alineado_2)
-                        alineado_2 *= "-"
+                        alineado_2 *= "-" #agrega un gap al final
+
                     else
-                        alineado_2 = alineado_2[1:n] * "-" * alineado_2[n+1:end]
+                        alineado_2 = alineado_2[1:n-1] * "-" * alineado_2[n:end]
+                        
                     end
 
                     m -= 1

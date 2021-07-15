@@ -32,10 +32,17 @@ function actualizarProfile(profile, cadena) #devuelve un nuevo profile con los p
         end
 
         if(nuevoCaracterAAgregar in cadenaColumna)
+            ###ACTUALIZACION DEL PORCENTAJE
             stringCadena = join(cadenaColumna) #uno la columna del perfil ej "ACG"
             indiceCaracterExistente = findfirst(nuevoCaracterAAgregar, stringCadena) #encuentro el indice del caracter
             nuevosPorcentajesColumna[indiceCaracterExistente[1]] = nuevosPorcentajesColumna[indiceCaracterExistente[1]] + 0.5 #actualizo el porcentaje en ese indice
-            nuevaCadenaColumna = cadenaColumna
+
+            ###ACTUALIZACION DE COLUMNA DE LETRAS
+            if(nuevoCaracterAAgregar === cadenaColumna[end]) #Si es igual al ultimo agregado
+                nuevaCadenaColumna = cadenaColumna
+            else
+                nuevaCadenaColumna = push!(cadenaColumna, nuevoCaracterAAgregar) #agrego la letra
+            end
         else
             nuevosPorcentajesColumna = push!(nuevosPorcentajesColumna, 0.5) #agrego el nuevo porcentaje
             nuevaCadenaColumna = push!(cadenaColumna, nuevoCaracterAAgregar) #agrego la letra
@@ -47,7 +54,7 @@ function actualizarProfile(profile, cadena) #devuelve un nuevo profile con los p
 
     end
 
-    return Profile(nuevoProfilePorcentajes, nuevaProfileCadena, profile.profileListaDeCadenas)
+    return Profile(nuevoProfilePorcentajes, nuevaProfileCadena, push!(profile.profileListaDeCadenas, cadena))
 end
 
 function agregarCadenaAListaDeCadenas(profile, cadena)
@@ -69,7 +76,24 @@ end
 function agregarColumnaDeGaps(profile, numeroColumna)
     nuevosPorcentajes = vcat(profile.profilePorcentajes[1: numeroColumna - 1], [[1]], profile.profilePorcentajes[numeroColumna : end])
     nuevasCadenas = vcat(profile.profileCadenas[1: numeroColumna - 1], [["-"]], profile.profileCadenas[numeroColumna : end])
-    return Profile(nuevosPorcentajes, nuevasCadenas, profile.profileListaDeCadenas)
+
+    #####Debo insertar strings en las cadenas que ya tenia guardada
+    #####para que el alineamiento que guardo sea consistente
+    nuevosStrings = []
+    for string in profile.profileListaDeCadenas
+        nuevoString = string[1:numeroColumna - 1] * "-" * string[numeroColumna:end]
+        nuevosStrings = push!(nuevosStrings, nuevoString)
+    end
+    return Profile(nuevosPorcentajes, nuevasCadenas, nuevosStrings)
+end
+
+function agregarGapsSoloEnStrings(profile, numeroColumna)
+    nuevosStrings = []
+    for string in profile.profileListaDeCadenas
+        nuevoString = string[1:numeroColumna - 1] * "-" * string[numeroColumna:end]
+        nuevosStrings = push!(nuevosStrings, nuevoString)
+    end
+    return Profile(profile.profilePorcentajes, profile.profileCadenas, nuevosStrings)
 end
 
 function cantidadDeFilas(profile)

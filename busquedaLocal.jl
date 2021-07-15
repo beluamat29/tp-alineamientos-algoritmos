@@ -1,0 +1,3 @@
+function busquedaLocal(profile)
+    
+end
