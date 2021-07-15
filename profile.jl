@@ -80,7 +80,7 @@ function imprimirProfile(profile)
     altoProfile =  cantidadDeFilas(profile)
     for numeroFila in 1:altoProfile
         for columna in 1:largoProfile(profile)
-            if(numeroFila <= length(profile.profileCadenas[columna]))
+            if(numeroFila < length(profile.profileCadenas[columna]))
                 print("|",profile.profileCadenas[columna][numeroFila], "|")
             else
                 print("|", profile.profileCadenas[columna][end], "|")
