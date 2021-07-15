@@ -1,5 +1,6 @@
 include("profile.jl")
 function reconstruccion_top_down(profile, str2,  W)
+    profile = agregarCadenaAListaDeCadenas(profile, str2)
     alineado_1 = profile
     alineado_2 = str2
     m = largoProfile(profile)

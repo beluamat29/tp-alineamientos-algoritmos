@@ -13,20 +13,20 @@ function algoritmoGreedyRandom(secuencias) #elegimos al azar entre algunas de la
     listaDeSecuencias = eliminarSecuenciaDeLista(primerParRandom[1],secuencias)
     listaDeSecuencias = eliminarSecuenciaDeLista(primerParRandom[2],secuencias)
 
-    profile = armarProfileInicial(primerParRandom)[3] #profile con el que arranca el algoritmo
-
+    profile = armarProfileInicial(primerParRandom)[2] #profile con el que arranca el algoritmo
+    score = 0
     while(listaDeSecuencias != []) #mientras queden secuencias por alinear
         mejoresSecuencias = encontrarNMejoresSecuencias(listaDeSecuencias, profile, length(listaDeSecuencias)/2)
         lProfile = largoProfile(profile)
         string2 = mejoresSecuencias[rand(1:end)] #elijo una secuencia al azar dentro de las n/2 mejores
         W = fill(typemin(Float64), lProfile, length(string2))
-        scorePar = needle_top_down(profile, string2, lProfile, length(string2), W)
+        score += needle_top_down(profile, string2, lProfile, length(string2), W)
         profile = reconstruccion_top_down(profile, string2, W)[3] #alineo el profile vs la cadena seleccionada
 
         listaDeSecuencias = eliminarSecuenciaDeLista(string2, listaDeSecuencias)
     end
 
-    return profile
+    return (score, profile)
 end
 
 function encontrarNMejoresPares(secuencias, cantidadMejores)
@@ -68,7 +68,8 @@ function armarProfileInicial(par)
     string2 = par[2]
     W = fill(typemin(Float64), lProfile, length(string2))
     scorePar = needle_top_down(profile, string2, lProfile, length(string2), W)
-    return reconstruccion_top_down(profile, string2, W)
+    profileActualizado = reconstruccion_top_down(profile, string2, W)[3]
+    return (scorePar, profileActualizado)
 end
 
 function encontrarNMejoresSecuencias(listaDeSecuencias, profile, cantidad)
@@ -87,5 +88,5 @@ function encontrarNMejoresSecuencias(listaDeSecuencias, profile, cantidad)
 end
 #profile = Profile(Any[Any[1.0], Any[1.0], Any[1.0], Any[1.0], Any[0.5, 0.5]], Any[["A"], ["A"], ["G"], ["T"], ["T", "A"]])
 
-profile = algoritmoGreedyRandom(["AACGT", "GTT", "AAGTT", "AAGTA", "TTAG", "GA", "CCCTAGG", "CGTAC"])
+profile = algoritmoGreedyRandom(["AACGT", "GTT", "AAGTT", "AAGTA", "TTAG", "CCCTAGG", "CGTAC"])
 imprimirProfile(profile)

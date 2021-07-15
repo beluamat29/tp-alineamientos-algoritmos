@@ -1,6 +1,7 @@
 struct Profile
     profilePorcentajes #lista de listas
     profileCadenas #lista de listas
+    profileListaDeCadenas
 end
 
 function inicializarProfile(cadena) #inicializa un nuevo profile con todos los porcentajes en 100%
@@ -12,7 +13,7 @@ function inicializarProfile(cadena) #inicializa un nuevo profile con todos los p
         profileCadenas = push!(profileCadenas, [string(cadena[columnaIndex])])
     end
 
-    return Profile(profilePorcentajes, profileCadenas)
+    return Profile(profilePorcentajes, profileCadenas, [cadena])
 end
 
 function actualizarProfile(profile, cadena) #devuelve un nuevo profile con los porcentajes actualizados
@@ -46,7 +47,11 @@ function actualizarProfile(profile, cadena) #devuelve un nuevo profile con los p
 
     end
 
-    return Profile(nuevoProfilePorcentajes, nuevaProfileCadena)
+    return Profile(nuevoProfilePorcentajes, nuevaProfileCadena, profile.profileListaDeCadenas)
+end
+
+function agregarCadenaAListaDeCadenas(profile, cadena)
+    return Profile(profile.profilePorcentajes, profile.profileCadenas, push!(profile.profileListaDeCadenas, cadena))
 end
 
 function largoProfile(profile) #devuelve el largo del profile (cantidad de columnas)
@@ -64,18 +69,11 @@ end
 function agregarColumnaDeGaps(profile, numeroColumna)
     nuevosPorcentajes = vcat(profile.profilePorcentajes[1: numeroColumna - 1], [[1]], profile.profilePorcentajes[numeroColumna : end])
     nuevasCadenas = vcat(profile.profileCadenas[1: numeroColumna - 1], [["-"]], profile.profileCadenas[numeroColumna : end])
-    return Profile(nuevosPorcentajes, nuevasCadenas)
+    return Profile(nuevosPorcentajes, nuevasCadenas, profile.profileListaDeCadenas)
 end
 
 function cantidadDeFilas(profile)
-    altoMaximo = 0
-    for columna in profile.profilePorcentajes
-        if length(columna) > altoMaximo
-            altoMaximo = length(columna)
-        end
-    end
-
-    return altoMaximo
+    return profile.profileListaDeCadenas
 end
 
 function imprimirProfile(profile)
@@ -83,9 +81,9 @@ function imprimirProfile(profile)
     for numeroFila in 1:altoProfile
         for columna in 1:largoProfile(profile)
             if(numeroFila <= length(profile.profileCadenas[columna]))
-                print(profile.profileCadenas[columna][numeroFila], " ")
+                print("|",profile.profileCadenas[columna][numeroFila], "|")
             else
-                print("  ")
+                print("| |")
             end
         end
         print("\n")
