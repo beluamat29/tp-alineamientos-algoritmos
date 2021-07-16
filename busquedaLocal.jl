@@ -2,25 +2,28 @@ include("profile.jl")
 include("result.jl")
 include("needleman.jl")
 include("algoritmo greedy.jl")
-
+include("algoritmo greedy random.jl")
+include("matrices de costo.jl")
 #buscaremos en tantas vecindades como cantidadMaximaDeIteracionesPorVecindario veces
 #haremos tantos cambios de gaps como (cantidadDeFilas del profile)^2
 function busquedaLocal(resultado, cantidadMaximaDeIteracionesPorVecindario, matrizDeScores)
+    println("score inicial papa:", resultado.score)
     mejorResultado = resultado #El que me dieron por parametro.
 
-    while(cantidadMaximaDeIteracionesPorVecindario > 0)
+    j = cantidadMaximaDeIteracionesPorVecindario
+    while(j > 0)
 
         mejorResultadoDelVecindario = mejorResultado
         cantidadDeFilasProfile = cantidadDeFilas(mejorResultadoDelVecindario.profile)
 
-        for i in cantidadDeFilasProfile #Busqueda dentro del vecindario
+        for i in 1:cantidadDeFilasProfile*1.5 #Busqueda dentro del vecindario
             cadenasParaCalcularNuevoPorcentaje = swapearGaps(mejorResultadoDelVecindario.profile.profileListaDeCadenas, i) #devuelve cadenas con los gaps swapeados
             profileYScoreConGapsSwapeados = calcularScoreConGapsSwapeados(cadenasParaCalcularNuevoPorcentaje, matrizDeScores) #devuelve Profile y nuevo score
 
             if(profileYScoreConGapsSwapeados.score > mejorResultadoDelVecindario.score)
-                println("el resultado del swap fue mejor que el mejor del vecindario. Actualizo mejor del vecindario:")
-                println("Mejor score del mejor del vecindario:", mejorResultadoDelVecindario.score)
-                println("Score del swapeo:", profileYScoreConGapsSwapeados.score)
+                #println("el resultado del swap fue mejor que el mejor del vecindario. Actualizo mejor del vecindario:")
+                #println("Mejor score del mejor del vecindario:", mejorResultadoDelVecindario.score)
+                #println("Score del swapeo:", profileYScoreConGapsSwapeados.score)
                 #Si el resultado de la iteracion actual es mejor que el mejor del vecindario actualizo
                 mejorResultadoDelVecindario = profileYScoreConGapsSwapeados
             end
@@ -29,14 +32,14 @@ function busquedaLocal(resultado, cantidadMaximaDeIteracionesPorVecindario, matr
         if(mejorResultadoDelVecindario.score > mejorResultado.score)
             #si el mejor del vecindario que acabo de procesar es mejor que el mejor general, actualizo
 
-            println("el resultado de la vecindad fue mejor que el acumulado, me muevo de vecindad:")
-            println("Mejor score general acumulado: ", mejorResultado.score)
-            println("Mejor score vecindad: ", mejorResultadoDelVecindario.score)
+            #println("el resultado de la vecindad fue mejor que el acumulado, me muevo de vecindad:")
+            #println("Mejor score general acumulado: ", mejorResultado.score)
+            #println("Mejor score vecindad: ", mejorResultadoDelVecindario.score)
 
             mejorResultado = mejorResultadoDelVecindario
         end
 
-        cantidadMaximaDeIteracionesPorVecindario -= 1
+        j -= 1
         #actualizar contador
     end
     return mejorResultado
@@ -115,4 +118,4 @@ Cadena("FLPSLVCQGTSNKLTQLGTFEDHFVSLQRMFNNCEVVLGNLEITYVQKNYDLSFLKTIQEVAGYVLIALNAV
 Cadena("LASGICQGTGNKLTQLGTLDDHFLSLQRMYNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNSVETIPLVNLQIIRGNVLYEGFALAVLSNYGMNKTGLKELPMRNLLEIL")
 ], matrizDeScores)
 
-talVezMejorResultado = busquedaLocal(resultado, 2, matrizDeScores)
+talVezMejorResultado2 = busquedaLocal(resultado, 10, matrizDeScores)

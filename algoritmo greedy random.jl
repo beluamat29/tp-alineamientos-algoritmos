@@ -5,12 +5,13 @@ include("algoritmo greedy.jl")
 include("matrices de costo.jl")
 include("result.jl")
 include("cadena.jl")
+include("matrices de costo.jl")
 
 using(Combinatorics)
 
 function algoritmoGreedyRandom(secuencias, matrizDeCostoEIndices) #largo(secuencias) debe ser >= 2
     #BUGIMPORTANTEEEE: No puede haber dos secuencias iguales :(
-    primerasNMejores = encontrarNMejoresPares(secuencias, length(secuencias)/2, matrizDeCostoEIndices) #me quedo con la mejor mitad
+    primerasNMejores = encontrarNMejoresPares(secuencias, length(secuencias)/1.5, matrizDeCostoEIndices) #me quedo con la mejor mitad
     primerParRandom = primerasNMejores[rand(1:end)] #elijo un par al azar dentro de los mejores
 
     listaDeSecuencias = eliminarSecuenciaDeLista(primerParRandom[1],secuencias)
@@ -18,14 +19,14 @@ function algoritmoGreedyRandom(secuencias, matrizDeCostoEIndices) #largo(secuenc
 
     profileInicial = armarProfileInicial(primerParRandom, matrizDeCostoEIndices)
     profile = profileInicial[2] #profile con el que arranca el algoritmo
-    score = profileInicial[1]
-    while(listaDeSecuencias != []) #mientras queden secuencias por alinear
-        mejoresSecuencias = encontrarNMejoresSecuencias(listaDeSecuencias, profile, length(listaDeSecuencias)/2, matrizDeCostoEIndices)
+    score = 0
+    while(length(listaDeSecuencias) > 1) #mientras quede mas de una secuencia por alinear
+        mejoresSecuencias = encontrarNMejoresSecuencias(listaDeSecuencias, profile, length(listaDeSecuencias)/1.5, matrizDeCostoEIndices)
         lProfile = largoProfile(profile)
         cadenaString2 = (mejoresSecuencias[rand(1:end)])
         string2 = cadenaString2.valorCadena #elijo una secuencia al azar dentro de las n/2 mejores
         W = fill(typemin(Float64), lProfile, length(string2))
-        score += needle_top_down(profile, string2, lProfile, length(string2), W, matrizDeCostoEIndices)
+        score = needle_top_down(profile, string2, lProfile, length(string2), W, matrizDeCostoEIndices)
         reconstruccion = reconstruccion_top_down(profile, string2, W) #alineo el profile vs la cadena seleccionada
         profile = reconstruccion[3]
         listaDeSecuencias = eliminarSecuenciaDeLista(cadenaString2, listaDeSecuencias)

@@ -37,13 +37,13 @@ function sii(condicion, res1, res2)
     end
 end
 
-function scoreColumna(profile, numeroColumna, caracterSegundaCadena, matrizDeCostoEIndices) 
+function scoreColumna(profile, numeroColumna, caracterSegundaCadena, matrizDeCostoEIndices)
     scoreDeColumna = 0
     #por ser recursiva siempre estamos trabajando con la ultima columna del profile y la ultima letra del string (n y m)
     profileColumna = profile.profileCadenas[numeroColumna]
 
     for (j, porcentaje) in enumerate(profile.profilePorcentajes[numeroColumna]) #recorrido vertical
-        scoreDeColumna = scoreDeColumna + (porcentaje * compararEnMatriz(profileColumna[j], caracterSegundaCadena, matrizDeCostoEIndices)) # ej 0.3 * -4
+        scoreDeColumna = scoreDeColumna + (porcentaje * compararEnMatriz(profileColumna[j], caracterSegundaCadena, matrizDeCostoEIndices))
     end
 
     return scoreDeColumna

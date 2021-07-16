@@ -4,6 +4,7 @@ include("reconstruccion.jl")
 include("matrices de costo.jl")
 include("cadena.jl")
 include("result.jl")
+include("matrices de costo.jl")
 
 using(Combinatorics)
 
@@ -14,7 +15,7 @@ function alineamientoGreedy(secuencias, matrizDeCostoEIndices)
     profileOriginal = inicializarProfile(mejorParInicial[1][1].valorCadena)
     string2 = (mejorParInicial[1][2]).valorCadena
     W = fill(typemin(Float64), largoProfile(profileOriginal), length(string2))
-    score = needle_top_down(profileOriginal, string2, largoProfile(profileOriginal), length(string2), W, matrizDeCostoEIndices)
+    needle_top_down(profileOriginal, string2, largoProfile(profileOriginal), length(string2), W, matrizDeCostoEIndices)
     profileOriginal = reconstruccion_top_down(profileOriginal, string2, W)[3] #armo el primer profile con el resultado del mejor par
 
     ###TERMINA INICIALIZACION DE PROFILE INICIAL###
@@ -22,10 +23,11 @@ function alineamientoGreedy(secuencias, matrizDeCostoEIndices)
     listaSecuencias = eliminarSecuenciaDeLista(mejorParInicial[1][1], secuencias) #elimino las secuencias del par inicial de la lista de secuencias restantes
     listaSecuencias = eliminarSecuenciaDeLista(mejorParInicial[1][2], secuencias)
 
+    score = 0
     while(listaSecuencias != []) #mientras queden cadenas sin alinear
         mejorAlineamientoQueSigue = encontrarMejorSecuenciaQueSigue(listaSecuencias, profileOriginal, matrizDeCostoEIndices) #busco la mejor cadena que sigue
         profileOriginal = reconstruccion_top_down(profileOriginal, mejorAlineamientoQueSigue[1].valorCadena, mejorAlineamientoQueSigue[3])[3] #actualizo el profile con la mejor cadena posible
-        score += mejorAlineamientoQueSigue[2] #sumo el score del alineamiento
+        score = mejorAlineamientoQueSigue[2] #sumo el score del alineamiento
         listaSecuencias = eliminarSecuenciaDeLista(mejorAlineamientoQueSigue[1], listaSecuencias) #sacamos a la secuencia elegida de la lista de secuencias
     end
 
