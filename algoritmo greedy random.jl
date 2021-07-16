@@ -3,6 +3,7 @@ include("needleman.jl")
 include("reconstruccion.jl")
 include("algoritmo greedy.jl")
 include("matrices de costo.jl")
+include("result.jl")
 
 using(Combinatorics)
 
@@ -28,7 +29,7 @@ function algoritmoGreedyRandom(secuencias, matrizDeCostoEIndices) #largo(secuenc
         listaDeSecuencias = eliminarSecuenciaDeLista(string2, listaDeSecuencias)
     end
 
-    return (score, profile)
+    return Result(profile, score)
 end
 
 function encontrarNMejoresPares(secuencias, cantidadMejores, matrizDeCostoEIndices)

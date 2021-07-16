@@ -37,7 +37,7 @@ function sii(condicion, res1, res2)
     end
 end
 
-function scoreColumna(profile, numeroColumna, caracterSegundaCadena, matrizDeCostoEIndices) #no se si esta dando lo que tiene que dar. pero reviso despues
+function scoreColumna(profile, numeroColumna, caracterSegundaCadena, matrizDeCostoEIndices) 
     scoreDeColumna = 0
     #por ser recursiva siempre estamos trabajando con la ultima columna del profile y la ultima letra del string (n y m)
     profileColumna = profile.profileCadenas[numeroColumna]

@@ -1,9 +1,13 @@
 include("algoritmo greedy random.jl")
-
+include("result.jl")
+include("needleman.jl")
+include("algoritmo greedy.jl")
 #buscaremos en tantas vecindades como cantidadMaximaDeIteracionesPorVecindario veces
 #haremos tantos cambios de gaps como (cantidadDeFilas del profile)^2
-function busquedaLocal(profile, cantidadMaximaDeIteracionesPorVecindario)
-    mejorResultado = profile[1] #El que me dieron por parametro. de alguna manera guardar el score que me dio el profile (Struct Result tal vez?)
+function busquedaLocal(resultado, cantidadMaximaDeIteracionesPorVecindario)
+    print("Bueno el random salio bien")
+    mejorResultado = resultado #El que me dieron por parametro.
+    matriz = matrizDeAminoacidos() #la inicializo aca asi evito instanciarla en cada iteracion
 
     while(cantidadMaximaDeIteracionesPorVecindario > 0)
         cantidadDeFilas = cantidadDeFilas(mejorResultado.profile)
@@ -11,14 +15,16 @@ function busquedaLocal(profile, cantidadMaximaDeIteracionesPorVecindario)
         mejorResultadoDelVecindario = mejorResultado
         for i in cantidadDeFilas #Busqueda dentro del vecindario
             cadenasParaCalcularNuevoPorcentaje = swapearGaps(mejorResultadoDelVecindario.profile, i)
-            profileYScoreConGapsSwapeados = calcularScoreConGapsSwapeados(cadenasParaCalcularNuevoPorcentaje) #devuelve Profile y nuevo score
+            profileYScoreConGapsSwapeados = calcularScoreConGapsSwapeados(cadenasParaCalcularNuevoPorcentaje, matriz) #devuelve Profile y nuevo score
 
             if(profileYScoreConGapsSwapeados.score > mejorProfileDelVecindario.score)
+                #Si el resultado de la iteracion actual es mejor que el mejor del vecindario actualizo
                 mejorResultadoDelVecindario = profileYScoreConGapsSwapeados
             end
         end
 
-        if(mejorResultadoDelVecindario.score > mejorResultado)
+        if(mejorResultadoDelVecindario.score > mejorResultado.score)
+            #si el mejor del vecindario que acabo de procesar es mejor que el mejor general, actualizo
             mejorResultado = mejorResultadoDelVecindario
         end
 
@@ -65,7 +71,23 @@ function swapearGaps(cadenasAux, i)
     return nuevasCadenas
 end
 
-cadenas = []
+function calcularScoreConGapsSwapeados(cadenasConGapsAlterados, matrizDeScores) #paso la matriz por parametro para no instanciarla en cada iteracion
+    profile = inicializarProfile(cadenasConGapsAlterados[1]) #arranco el profile con la primera cadena
+    restoDeLasCadenas = eliminarSecuenciaDeLista(cadenasConGapsAlterados[1], cadenasConGapsAlterados) #elimino la primera secuencia de la lista (la que use para construir el profile)
+
+    nuevoScore = 0
+    for cadena in restoDeLasCadenas
+
+        for (charIndex, char) in cadena
+            ##PODEMOS ASUMIR QUE LAS CADENAS TIENEN EL MISMO LARGO QUE EL PROFILE (VIENEN DE UN ALINEAMIENTO YA HECHO)
+            nuevoScore += scoreColumna(profile, charIndex, char, matrizDeScores)
+        end
+
+        profile = actualizarProfile(profile, cadena)
+    end
+
+    return Result(profile, scoreProfile)
+end
 
 p = algoritmoGreedyRandom([
 "LCQGTSNKLTQLGTFEDHFLSLRRMFNNCEVVLGNLEITYVQKNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNMYYENSYALAVLSNYGTNKSGLRELPMRSLQEVL",
@@ -82,4 +104,4 @@ p = algoritmoGreedyRandom([
 "LASGICQGTGNKLTQLGTLDDHFLSLQRMYNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNSVETIPLVNLQIIRGNVLYEGFALAVLSNYGMNKTGLKELPMRNLLEIL"
 ], matrizDeAminoacidos())
 
-swapearGaps(p[2].profileListaDeCadenas, 1)
+#swapearGaps(p[2].profileListaDeCadenas, 1)
