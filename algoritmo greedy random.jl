@@ -9,9 +9,8 @@ include("matrices de costo.jl")
 
 using(Combinatorics)
 
-function algoritmoGreedyRandom(secuencias, matrizDeCostoEIndices) #largo(secuencias) debe ser >= 2
-    #BUGIMPORTANTEEEE: No puede haber dos secuencias iguales :(
-    primerasNMejores = encontrarNMejoresPares(secuencias, length(secuencias)/1.5, matrizDeCostoEIndices) #me quedo con la mejor mitad
+function algoritmoGreedyRandom(secuencias, matrizDeCostoEIndices, randomTake) #largo(secuencias) debe ser >= 2
+    primerasNMejores = encontrarNMejoresPares(secuencias, length(secuencias)/randomTake, matrizDeCostoEIndices) #me quedo con la mejor mitad
     primerParRandom = primerasNMejores[rand(1:end)] #elijo un par al azar dentro de los mejores
 
     listaDeSecuencias = eliminarSecuenciaDeLista(primerParRandom[1],secuencias)
@@ -21,7 +20,7 @@ function algoritmoGreedyRandom(secuencias, matrizDeCostoEIndices) #largo(secuenc
     profile = profileInicial[2] #profile con el que arranca el algoritmo
     score = 0
     while(length(listaDeSecuencias) > 1) #mientras quede mas de una secuencia por alinear
-        mejoresSecuencias = encontrarNMejoresSecuencias(listaDeSecuencias, profile, length(listaDeSecuencias)/1.5, matrizDeCostoEIndices)
+        mejoresSecuencias = encontrarNMejoresSecuencias(listaDeSecuencias, profile, length(listaDeSecuencias)/randomTake, matrizDeCostoEIndices)
         lProfile = largoProfile(profile)
         cadenaString2 = (mejoresSecuencias[rand(1:end)])
         string2 = cadenaString2.valorCadena #elijo una secuencia al azar dentro de las n/2 mejores
@@ -104,4 +103,4 @@ Cadena("MFNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNMYYENSYALAVLSNY
 Cadena("LEEKKVCQGTSNKLTQLGTFEDHFLSLQRMFNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNMYYENSYALAVLSNYDANKTGLKELPMRNLQEIL"),
 Cadena("FLPSLVCQGTSNKLTQLGTFEDHFVSLQRMFNNCEVVLGNLEITYVQKNYDLSFLKTIQEVAGYVLIALNAVEKIPLENLQVIRGNVLYENFYALSVLSNYDVNKTGVKELPMRNLLEIL"),
 Cadena("LASGICQGTGNKLTQLGTLDDHFLSLQRMYNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNSVETIPLVNLQIIRGNVLYEGFALAVLSNYGMNKTGLKELPMRNLLEIL")
-], matrizDeAminoacidos())
+], matrizDeAminoacidos(), 1.5)

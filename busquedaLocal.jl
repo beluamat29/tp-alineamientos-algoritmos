@@ -7,7 +7,6 @@ include("matrices de costo.jl")
 #buscaremos en tantas vecindades como cantidadMaximaDeIteracionesPorVecindario veces
 #haremos tantos cambios de gaps como (cantidadDeFilas del profile)^2
 function busquedaLocal(resultado, cantidadMaximaDeIteracionesPorVecindario, matrizDeScores)
-    println("score inicial papa:", resultado.score)
     mejorResultado = resultado #El que me dieron por parametro.
 
     j = cantidadMaximaDeIteracionesPorVecindario
@@ -21,9 +20,9 @@ function busquedaLocal(resultado, cantidadMaximaDeIteracionesPorVecindario, matr
             profileYScoreConGapsSwapeados = calcularScoreConGapsSwapeados(cadenasParaCalcularNuevoPorcentaje, matrizDeScores) #devuelve Profile y nuevo score
 
             if(profileYScoreConGapsSwapeados.score > mejorResultadoDelVecindario.score)
-                println("el resultado del swap fue mejor que el mejor del vecindario. Actualizo mejor del vecindario:")
-                println("Mejor score del mejor del vecindario:", mejorResultadoDelVecindario.score)
-                println("Score del swapeo:", profileYScoreConGapsSwapeados.score)
+                #println("el resultado del swap fue mejor que el mejor del vecindario. Actualizo mejor del vecindario:")
+                #println("Mejor score del mejor del vecindario:", mejorResultadoDelVecindario.score)
+                #println("Score del swapeo:", profileYScoreConGapsSwapeados.score)
                 #Si el resultado de la iteracion actual es mejor que el mejor del vecindario actualizo
                 mejorResultadoDelVecindario = profileYScoreConGapsSwapeados
             end
@@ -32,9 +31,9 @@ function busquedaLocal(resultado, cantidadMaximaDeIteracionesPorVecindario, matr
         if(mejorResultadoDelVecindario.score > mejorResultado.score)
             #si el mejor del vecindario que acabo de procesar es mejor que el mejor general, actualizo
 
-            println("el resultado de la vecindad fue mejor que el acumulado, me muevo de vecindad:")
-            println("Mejor score general acumulado: ", mejorResultado.score)
-            println("Mejor score vecindad: ", mejorResultadoDelVecindario.score)
+            #println("el resultado de la vecindad fue mejor que el acumulado, me muevo de vecindad:")
+            #println("Mejor score general acumulado: ", mejorResultado.score)
+            #println("Mejor score vecindad: ", mejorResultadoDelVecindario.score)
 
             mejorResultado = mejorResultadoDelVecindario
         end
@@ -119,4 +118,4 @@ Cadena("FLPSLVCQGTSNKLTQLGTFEDHFVSLQRMFNNCEVVLGNLEITYVQKNYDLSFLKTIQEVAGYVLIALNAV
 Cadena("LASGICQGTGNKLTQLGTLDDHFLSLQRMYNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNSVETIPLVNLQIIRGNVLYEGFALAVLSNYGMNKTGLKELPMRNLLEIL")
 ], matrizDeScores)
 
-talVezMejorResultado2 = busquedaLocal(resultado, 10, matrizDeScores)
+talVezMejorResultado2 = busquedaLocal(resultado, 20, matrizDeScores)

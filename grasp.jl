@@ -1,30 +1,38 @@
 include("matrices de costo.jl")
 include("algoritmo greedy random.jl")
 
-function grasp(secuencias, limiteIteracionesSinMejora, cantMejorasBusquedaLocal)
+function grasp(secuencias, limiteIteracionesSinMejora, cantidadIteracionesMaximas, cantMejorasBusquedaLocal)
     matriz = matrizDeAminoacidos()
+    iteracionesSinMejora = 0
+    iteracion = 0
+
+    println("///////////ARRANCO A CORRER GRASP///////////")
+
     mejorScore = 0
     mejorResultado = nothing
 
-    while (limiteIteracionesSinMejora > 0)
+    while (iteracionesSinMejora < limiteIteracionesSinMejora && iteracion < cantidadIteracionesMaximas)
+        println("///////////ARRANCO ITERACION NUMERO: ", iteracion, " ///////////")
         secuenciasAux = copy(secuencias)
-        corridaRandom = algoritmoGreedyRandom(secuenciasAux, matriz)
-        profile = corridaRandom.profile
-        score = corridaRandom.score
 
+        corridaRandom = algoritmoGreedyRandom(secuenciasAux, matriz, 1.5)
         resultadoBusquedaLocal = busquedaLocal(corridaRandom, cantMejorasBusquedaLocal, matriz)
 
-        if(resultadoBusquedaLocal.score > corridaRandom.score)
+        if(resultadoBusquedaLocal.score > mejorScore)
             #Hubo una mejora
-            print("hubo una mejora")
+            println("hubo una mejora, el nuevo score es: ", resultadoBusquedaLocal.score)
             mejorScore = resultadoBusquedaLocal.score
             mejorResultado = resultadoBusquedaLocal
+            iteracionesSinMejora = 0
 
         else
-            print("NO hubo mejora")
+            println("NO hubo mejora")
             #Queda una iteracion menos
-            limiteIteracionesSinMejora -= 1
+            iteracionesSinMejora += 1
         end
+
+        iteracion += 1
+        println(mejorScore)
     end
 
     return mejorResultado
@@ -43,6 +51,7 @@ Cadena("MFNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNMYYENSYALAVLSNY
 Cadena("LEEKKVCQGTSNKLTQLGTFEDHFLSLQRMFNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNMYYENSYALAVLSNYDANKTGLKELPMRNLQEIL"),
 Cadena("FLPSLVCQGTSNKLTQLGTFEDHFVSLQRMFNNCEVVLGNLEITYVQKNYDLSFLKTIQEVAGYVLIALNAVEKIPLENLQVIRGNVLYENFYALSVLSNYDVNKTGVKELPMRNLLEIL"),
 Cadena("LASGICQGTGNKLTQLGTLDDHFLSLQRMYNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNSVETIPLVNLQIIRGNVLYEGFALAVLSNYGMNKTGLKELPMRNLLEIL")],
-3,
+10,
+20,
 10
 )
