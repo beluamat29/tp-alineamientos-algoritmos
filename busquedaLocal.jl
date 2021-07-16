@@ -21,9 +21,9 @@ function busquedaLocal(resultado, cantidadMaximaDeIteracionesPorVecindario, matr
             profileYScoreConGapsSwapeados = calcularScoreConGapsSwapeados(cadenasParaCalcularNuevoPorcentaje, matrizDeScores) #devuelve Profile y nuevo score
 
             if(profileYScoreConGapsSwapeados.score > mejorResultadoDelVecindario.score)
-                #println("el resultado del swap fue mejor que el mejor del vecindario. Actualizo mejor del vecindario:")
-                #println("Mejor score del mejor del vecindario:", mejorResultadoDelVecindario.score)
-                #println("Score del swapeo:", profileYScoreConGapsSwapeados.score)
+                println("el resultado del swap fue mejor que el mejor del vecindario. Actualizo mejor del vecindario:")
+                println("Mejor score del mejor del vecindario:", mejorResultadoDelVecindario.score)
+                println("Score del swapeo:", profileYScoreConGapsSwapeados.score)
                 #Si el resultado de la iteracion actual es mejor que el mejor del vecindario actualizo
                 mejorResultadoDelVecindario = profileYScoreConGapsSwapeados
             end
@@ -32,9 +32,9 @@ function busquedaLocal(resultado, cantidadMaximaDeIteracionesPorVecindario, matr
         if(mejorResultadoDelVecindario.score > mejorResultado.score)
             #si el mejor del vecindario que acabo de procesar es mejor que el mejor general, actualizo
 
-            #println("el resultado de la vecindad fue mejor que el acumulado, me muevo de vecindad:")
-            #println("Mejor score general acumulado: ", mejorResultado.score)
-            #println("Mejor score vecindad: ", mejorResultadoDelVecindario.score)
+            println("el resultado de la vecindad fue mejor que el acumulado, me muevo de vecindad:")
+            println("Mejor score general acumulado: ", mejorResultado.score)
+            println("Mejor score vecindad: ", mejorResultadoDelVecindario.score)
 
             mejorResultado = mejorResultadoDelVecindario
         end
@@ -86,17 +86,18 @@ function calcularScoreConGapsSwapeados(secuenciasConGapsAlterados, matrizDeScore
     profile = inicializarProfile(secuenciasConGapsAlterados[1].valorCadena) #arranco el profile con la primera cadena
     restoDeLasCadenas = eliminarSecuenciaDeLista(secuenciasConGapsAlterados[1], secuenciasConGapsAlterados) #elimino la primera secuencia de la lista (la que use para construir el profile)
 
-    nuevoScore = 0
-    for secuencia in secuenciasConGapsAlterados
-
-        cadena = secuencia.valorCadena
-        for (charIndex, char) in enumerate(cadena)
-            ##PODEMOS ASUMIR QUE LAS CADENAS TIENEN EL MISMO LARGO QUE EL PROFILE (VIENEN DE UN ALINEAMIENTO YA HECHO)
-            nuevoScore += scoreColumna(profile, charIndex, char, matrizDeScores)
-        end
-
-        profile = actualizarProfile(profile, cadena)
+    for secuencia in secuenciasConGapsAlterados[1: end - 1]
+         cadena = secuencia.valorCadena
+         profile = actualizarProfile(profile, cadena)
     end
+
+    nuevoScore = 0
+
+    for (charIndex, char) in enumerate(secuenciasConGapsAlterados[end].valorCadena)
+        ##PODEMOS ASUMIR QUE LAS CADENAS TIENEN EL MISMO LARGO QUE EL PROFILE (VIENEN DE UN ALINEAMIENTO YA HECHO)
+        nuevoScore += scoreColumna(profile, charIndex, char, matrizDeScores)
+    end
+
 
     return Result(profile, nuevoScore)
 end
