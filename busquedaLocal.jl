@@ -1,23 +1,26 @@
-include("algoritmo greedy random.jl")
+include("profile.jl")
 include("result.jl")
 include("needleman.jl")
 include("algoritmo greedy.jl")
+
 #buscaremos en tantas vecindades como cantidadMaximaDeIteracionesPorVecindario veces
 #haremos tantos cambios de gaps como (cantidadDeFilas del profile)^2
-function busquedaLocal(resultado, cantidadMaximaDeIteracionesPorVecindario)
-    print("Bueno el random salio bien")
+function busquedaLocal(resultado, cantidadMaximaDeIteracionesPorVecindario, matrizDeScores)
     mejorResultado = resultado #El que me dieron por parametro.
-    matriz = matrizDeAminoacidos() #la inicializo aca asi evito instanciarla en cada iteracion
 
     while(cantidadMaximaDeIteracionesPorVecindario > 0)
-        cantidadDeFilas = cantidadDeFilas(mejorResultado.profile)
 
         mejorResultadoDelVecindario = mejorResultado
-        for i in cantidadDeFilas #Busqueda dentro del vecindario
-            cadenasParaCalcularNuevoPorcentaje = swapearGaps(mejorResultadoDelVecindario.profile, i)
-            profileYScoreConGapsSwapeados = calcularScoreConGapsSwapeados(cadenasParaCalcularNuevoPorcentaje, matriz) #devuelve Profile y nuevo score
+        cantidadDeFilasProfile = cantidadDeFilas(mejorResultadoDelVecindario.profile)
 
-            if(profileYScoreConGapsSwapeados.score > mejorProfileDelVecindario.score)
+        for i in cantidadDeFilasProfile #Busqueda dentro del vecindario
+            cadenasParaCalcularNuevoPorcentaje = swapearGaps(mejorResultadoDelVecindario.profile.profileListaDeCadenas, i) #devuelve cadenas con los gaps swapeados
+            profileYScoreConGapsSwapeados = calcularScoreConGapsSwapeados(cadenasParaCalcularNuevoPorcentaje, matrizDeScores) #devuelve Profile y nuevo score
+
+            if(profileYScoreConGapsSwapeados.score > mejorResultadoDelVecindario.score)
+                println("el resultado del swap fue mejor que el mejor del vecindario. Actualizo mejor del vecindario:")
+                println("Mejor score del mejor del vecindario:", mejorResultadoDelVecindario.score)
+                println("Score del swapeo:", profileYScoreConGapsSwapeados.score)
                 #Si el resultado de la iteracion actual es mejor que el mejor del vecindario actualizo
                 mejorResultadoDelVecindario = profileYScoreConGapsSwapeados
             end
@@ -25,6 +28,11 @@ function busquedaLocal(resultado, cantidadMaximaDeIteracionesPorVecindario)
 
         if(mejorResultadoDelVecindario.score > mejorResultado.score)
             #si el mejor del vecindario que acabo de procesar es mejor que el mejor general, actualizo
+
+            println("el resultado de la vecindad fue mejor que el acumulado, me muevo de vecindad:")
+            println("Mejor score general acumulado: ", mejorResultado.score)
+            println("Mejor score vecindad: ", mejorResultadoDelVecindario.score)
+
             mejorResultado = mejorResultadoDelVecindario
         end
 
@@ -34,10 +42,10 @@ function busquedaLocal(resultado, cantidadMaximaDeIteracionesPorVecindario)
     return mejorResultado
 end
 
-function swapearGaps(cadenasAux, i)
+function swapearGaps(cadenas, i)
     nuevasCadenas = []
-    for cadena in cadenasAux
-        print(cadena)
+    for cadena in cadenas
+
         largoCadena = length(cadena)
         indice = 0
         numeroDeGap = 0
@@ -62,23 +70,24 @@ function swapearGaps(cadenasAux, i)
                 cadenaNueva = cadena[1: indice - 2] * "-" * cadena[indice - 1] * cadena[indice + 1: end]
             end
 
-            nuevasCadenas = push!(nuevasCadenas, cadenaNueva)
+            nuevasCadenas = push!(nuevasCadenas, Cadena(cadenaNueva))
         else
-            nuevasCadenas = push!(nuevasCadenas, cadena)
+            nuevasCadenas = push!(nuevasCadenas, Cadena(cadena))
         end
     end
 
     return nuevasCadenas
 end
 
-function calcularScoreConGapsSwapeados(cadenasConGapsAlterados, matrizDeScores) #paso la matriz por parametro para no instanciarla en cada iteracion
-    profile = inicializarProfile(cadenasConGapsAlterados[1]) #arranco el profile con la primera cadena
-    restoDeLasCadenas = eliminarSecuenciaDeLista(cadenasConGapsAlterados[1], cadenasConGapsAlterados) #elimino la primera secuencia de la lista (la que use para construir el profile)
+function calcularScoreConGapsSwapeados(secuenciasConGapsAlterados, matrizDeScores) #paso la matriz por parametro para no instanciarla en cada iteracion
+    profile = inicializarProfile(secuenciasConGapsAlterados[1].valorCadena) #arranco el profile con la primera cadena
+    restoDeLasCadenas = eliminarSecuenciaDeLista(secuenciasConGapsAlterados[1], secuenciasConGapsAlterados) #elimino la primera secuencia de la lista (la que use para construir el profile)
 
     nuevoScore = 0
-    for cadena in restoDeLasCadenas
+    for secuencia in secuenciasConGapsAlterados
 
-        for (charIndex, char) in cadena
+        cadena = secuencia.valorCadena
+        for (charIndex, char) in enumerate(cadena)
             ##PODEMOS ASUMIR QUE LAS CADENAS TIENEN EL MISMO LARGO QUE EL PROFILE (VIENEN DE UN ALINEAMIENTO YA HECHO)
             nuevoScore += scoreColumna(profile, charIndex, char, matrizDeScores)
         end
@@ -86,22 +95,24 @@ function calcularScoreConGapsSwapeados(cadenasConGapsAlterados, matrizDeScores) 
         profile = actualizarProfile(profile, cadena)
     end
 
-    return Result(profile, scoreProfile)
+    return Result(profile, nuevoScore)
 end
 
-p = algoritmoGreedyRandom([
-"LCQGTSNKLTQLGTFEDHFLSLRRMFNNCEVVLGNLEITYVQKNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNMYYENSYALAVLSNYGTNKSGLRELPMRSLQEVL",
-"VCQGTSNRLTQLGTFEDHFLSLQRMFNNCEVVLGNLEITYMQRNYDLSFLKTIQEVAGYVLIALNTVEKIPLENLQIIRGNVLYENTHALSVLSNYGSNKTGLQELPLRNLHEIL",
-"IILVQICQGTSNRLTQLGTFEDHFLSLQRMFNNCEVVLGNLEITYMQKNYDLSFLKTIQEVAGYVLIALNTVEKIPLENLQIIRGNVLYENTHALSVLSNYGANKVGLRELPMRNLQEIL",
-"FCQGTSNKLTQLGTFEDHFLSLQRMFNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNLLYENTYALAVLSNYGANKTGVKELPMRNLQEIL",
-"VCQGTSNKLTQLGTFEDHFLSLQRMFNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNMYYENSYALAVLSNYDANKTGLKELPMRNLQEIL",
-"LEEKKVCQGTSNKLTQLGTFEDHFLSLQRMFNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNMYYENSYALAVLSNYDANKTGLKELPMRNLQEIL",
-"MFNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNMYYENSYALAVLSNYDANKTGLKELPMRNLQEIL",
-"LEEKKVCQGTSNKLTQLGTFEDHFLSLQRMFNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNMYYENSYALAVLSNYDANKTGLKELPMRNLQEIL",
-"MFNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNMYYENSYALAVLSNYDANKTGLKELPMRNLQEIL",
-"LEEKKVCQGTSNKLTQLGTFEDHFLSLQRMFNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNMYYENSYALAVLSNYDANKTGLKELPMRNLQEIL",
-"FLPSLVCQGTSNKLTQLGTFEDHFVSLQRMFNNCEVVLGNLEITYVQKNYDLSFLKTIQEVAGYVLIALNAVEKIPLENLQVIRGNVLYENFYALSVLSNYDVNKTGVKELPMRNLLEIL",
-"LASGICQGTGNKLTQLGTLDDHFLSLQRMYNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNSVETIPLVNLQIIRGNVLYEGFALAVLSNYGMNKTGLKELPMRNLLEIL"
-], matrizDeAminoacidos())
+matrizDeScores = matrizDeAminoacidos()
 
-#swapearGaps(p[2].profileListaDeCadenas, 1)
+resultado = algoritmoGreedyRandom([
+Cadena("LCQGTSNKLTQLGTFEDHFLSLRRMFNNCEVVLGNLEITYVQKNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNMYYENSYALAVLSNYGTNKSGLRELPMRSLQEVL"),
+Cadena("VCQGTSNRLTQLGTFEDHFLSLQRMFNNCEVVLGNLEITYMQRNYDLSFLKTIQEVAGYVLIALNTVEKIPLENLQIIRGNVLYENTHALSVLSNYGSNKTGLQELPLRNLHEIL"),
+Cadena("IILVQICQGTSNRLTQLGTFEDHFLSLQRMFNNCEVVLGNLEITYMQKNYDLSFLKTIQEVAGYVLIALNTVEKIPLENLQIIRGNVLYENTHALSVLSNYGANKVGLRELPMRNLQEIL"),
+Cadena("FCQGTSNKLTQLGTFEDHFLSLQRMFNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNLLYENTYALAVLSNYGANKTGVKELPMRNLQEIL"),
+Cadena("VCQGTSNKLTQLGTFEDHFLSLQRMFNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNMYYENSYALAVLSNYDANKTGLKELPMRNLQEIL"),
+Cadena("LEEKKVCQGTSNKLTQLGTFEDHFLSLQRMFNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNMYYENSYALAVLSNYDANKTGLKELPMRNLQEIL"),
+Cadena("MFNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNMYYENSYALAVLSNYDANKTGLKELPMRNLQEIL"),
+Cadena("LEEKKVCQGTSNKLTQLGTFEDHFLSLQRMFNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNMYYENSYALAVLSNYDANKTGLKELPMRNLQEIL"),
+Cadena("MFNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNMYYENSYALAVLSNYDANKTGLKELPMRNLQEIL"),
+Cadena("LEEKKVCQGTSNKLTQLGTFEDHFLSLQRMFNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNMYYENSYALAVLSNYDANKTGLKELPMRNLQEIL"),
+Cadena("FLPSLVCQGTSNKLTQLGTFEDHFVSLQRMFNNCEVVLGNLEITYVQKNYDLSFLKTIQEVAGYVLIALNAVEKIPLENLQVIRGNVLYENFYALSVLSNYDVNKTGVKELPMRNLLEIL"),
+Cadena("LASGICQGTGNKLTQLGTLDDHFLSLQRMYNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNSVETIPLVNLQIIRGNVLYEGFALAVLSNYGMNKTGLKELPMRNLLEIL")
+], matrizDeScores)
+
+talVezMejorResultado = busquedaLocal(resultado, 2, matrizDeScores)

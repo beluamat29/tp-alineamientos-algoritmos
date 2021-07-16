@@ -4,6 +4,7 @@ include("reconstruccion.jl")
 include("algoritmo greedy.jl")
 include("matrices de costo.jl")
 include("result.jl")
+include("cadena.jl")
 
 using(Combinatorics)
 
@@ -21,12 +22,13 @@ function algoritmoGreedyRandom(secuencias, matrizDeCostoEIndices) #largo(secuenc
     while(listaDeSecuencias != []) #mientras queden secuencias por alinear
         mejoresSecuencias = encontrarNMejoresSecuencias(listaDeSecuencias, profile, length(listaDeSecuencias)/2, matrizDeCostoEIndices)
         lProfile = largoProfile(profile)
-        string2 = mejoresSecuencias[rand(1:end)] #elijo una secuencia al azar dentro de las n/2 mejores
+        cadenaString2 = (mejoresSecuencias[rand(1:end)])
+        string2 = cadenaString2.valorCadena #elijo una secuencia al azar dentro de las n/2 mejores
         W = fill(typemin(Float64), lProfile, length(string2))
         score += needle_top_down(profile, string2, lProfile, length(string2), W, matrizDeCostoEIndices)
         reconstruccion = reconstruccion_top_down(profile, string2, W) #alineo el profile vs la cadena seleccionada
         profile = reconstruccion[3]
-        listaDeSecuencias = eliminarSecuenciaDeLista(string2, listaDeSecuencias)
+        listaDeSecuencias = eliminarSecuenciaDeLista(cadenaString2, listaDeSecuencias)
     end
 
     return Result(profile, score)
@@ -41,8 +43,8 @@ function encontrarNMejoresPares(secuencias, cantidadMejores, matrizDeCostoEIndic
         scoreMejorPar = typemin(Float64)
 
         for par in listaDePares
-            profilePar = inicializarProfile(par[1]) #inicializo un nuevo profile con el primer elemento de cada par
-            string2 = par[2] #uso al segundo elemento de cada par como cadena
+            profilePar = inicializarProfile(par[1].valorCadena) #inicializo un nuevo profile con el primer elemento de cada par
+            string2 = par[2].valorCadena #uso al segundo elemento de cada par como cadena
             lProfile = largoProfile(profilePar)
             W = fill(typemin(Float64), lProfile, length(string2))
             scorePar = needle_top_down(profilePar, string2, lProfile, length(string2), W, matrizDeCostoEIndices) #averiguo el score de este par
@@ -59,16 +61,14 @@ function encontrarNMejoresPares(secuencias, cantidadMejores, matrizDeCostoEIndic
     return mejoresPares #retorno los cantidadMejores pares
 end
 
-#encontrarNMejoresPares(["AACGT", "GTT", "AAGTT", "AAGTA", "GGGTT", "AA", "CCCGA", "GGTAC"], 4)
-
 function eliminarParDeListaDePares(mejorPar, listaDePares)
     return filter!(par -> (par[1] !== mejorPar[1]) || (par[2] !== mejorPar[2]), listaDePares)
 end
 
 function armarProfileInicial(par, matrizDeCostoEIndices)
-    profile = inicializarProfile(par[1])
+    profile = inicializarProfile(par[1].valorCadena)
     lProfile = largoProfile(profile)
-    string2 = par[2]
+    string2 = par[2].valorCadena
     W = fill(typemin(Float64), lProfile, length(string2))
     scorePar = needle_top_down(profile, string2, lProfile, length(string2), W, matrizDeCostoEIndices)
     profileActualizado = reconstruccion_top_down(profile, string2, W)[3]
@@ -91,16 +91,16 @@ function encontrarNMejoresSecuencias(listaDeSecuencias, profile, cantidad, matri
 end
 
 p = algoritmoGreedyRandom([
-"LCQGTSNKLTQLGTFEDHFLSLRRMFNNCEVVLGNLEITYVQKNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNMYYENSYALAVLSNYGTNKSGLRELPMRSLQEVL",
-"VCQGTSNRLTQLGTFEDHFLSLQRMFNNCEVVLGNLEITYMQRNYDLSFLKTIQEVAGYVLIALNTVEKIPLENLQIIRGNVLYENTHALSVLSNYGSNKTGLQELPLRNLHEIL",
-"IILVQICQGTSNRLTQLGTFEDHFLSLQRMFNNCEVVLGNLEITYMQKNYDLSFLKTIQEVAGYVLIALNTVEKIPLENLQIIRGNVLYENTHALSVLSNYGANKVGLRELPMRNLQEIL",
-"FCQGTSNKLTQLGTFEDHFLSLQRMFNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNLLYENTYALAVLSNYGANKTGVKELPMRNLQEIL",
-"VCQGTSNKLTQLGTFEDHFLSLQRMFNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNMYYENSYALAVLSNYDANKTGLKELPMRNLQEIL",
-"LEEKKVCQGTSNKLTQLGTFEDHFLSLQRMFNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNMYYENSYALAVLSNYDANKTGLKELPMRNLQEIL",
-"MFNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNMYYENSYALAVLSNYDANKTGLKELPMRNLQEIL",
-"LEEKKVCQGTSNKLTQLGTFEDHFLSLQRMFNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNMYYENSYALAVLSNYDANKTGLKELPMRNLQEIL",
-"MFNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNMYYENSYALAVLSNYDANKTGLKELPMRNLQEIL",
-"LEEKKVCQGTSNKLTQLGTFEDHFLSLQRMFNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNMYYENSYALAVLSNYDANKTGLKELPMRNLQEIL",
-"FLPSLVCQGTSNKLTQLGTFEDHFVSLQRMFNNCEVVLGNLEITYVQKNYDLSFLKTIQEVAGYVLIALNAVEKIPLENLQVIRGNVLYENFYALSVLSNYDVNKTGVKELPMRNLLEIL",
-"LASGICQGTGNKLTQLGTLDDHFLSLQRMYNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNSVETIPLVNLQIIRGNVLYEGFALAVLSNYGMNKTGLKELPMRNLLEIL"
+Cadena("LCQGTSNKLTQLGTFEDHFLSLRRMFNNCEVVLGNLEITYVQKNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNMYYENSYALAVLSNYGTNKSGLRELPMRSLQEVL"),
+Cadena("VCQGTSNRLTQLGTFEDHFLSLQRMFNNCEVVLGNLEITYMQRNYDLSFLKTIQEVAGYVLIALNTVEKIPLENLQIIRGNVLYENTHALSVLSNYGSNKTGLQELPLRNLHEIL"),
+Cadena("IILVQICQGTSNRLTQLGTFEDHFLSLQRMFNNCEVVLGNLEITYMQKNYDLSFLKTIQEVAGYVLIALNTVEKIPLENLQIIRGNVLYENTHALSVLSNYGANKVGLRELPMRNLQEIL"),
+Cadena("FCQGTSNKLTQLGTFEDHFLSLQRMFNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNLLYENTYALAVLSNYGANKTGVKELPMRNLQEIL"),
+Cadena("VCQGTSNKLTQLGTFEDHFLSLQRMFNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNMYYENSYALAVLSNYDANKTGLKELPMRNLQEIL"),
+Cadena("LEEKKVCQGTSNKLTQLGTFEDHFLSLQRMFNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNMYYENSYALAVLSNYDANKTGLKELPMRNLQEIL"),
+Cadena("MFNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNMYYENSYALAVLSNYDANKTGLKELPMRNLQEIL"),
+Cadena("LEEKKVCQGTSNKLTQLGTFEDHFLSLQRMFNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNMYYENSYALAVLSNYDANKTGLKELPMRNLQEIL"),
+Cadena("MFNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNMYYENSYALAVLSNYDANKTGLKELPMRNLQEIL"),
+Cadena("LEEKKVCQGTSNKLTQLGTFEDHFLSLQRMFNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNMYYENSYALAVLSNYDANKTGLKELPMRNLQEIL"),
+Cadena("FLPSLVCQGTSNKLTQLGTFEDHFVSLQRMFNNCEVVLGNLEITYVQKNYDLSFLKTIQEVAGYVLIALNAVEKIPLENLQVIRGNVLYENFYALSVLSNYDVNKTGVKELPMRNLLEIL"),
+Cadena("LASGICQGTGNKLTQLGTLDDHFLSLQRMYNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNSVETIPLVNLQIIRGNVLYEGFALAVLSNYGMNKTGLKELPMRNLLEIL")
 ], matrizDeAminoacidos())

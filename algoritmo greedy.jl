@@ -3,6 +3,7 @@ include("needleman.jl")
 include("reconstruccion.jl")
 include("matrices de costo.jl")
 include("cadena.jl")
+include("result.jl")
 
 using(Combinatorics)
 
@@ -28,7 +29,7 @@ function alineamientoGreedy(secuencias, matrizDeCostoEIndices)
         listaSecuencias = eliminarSecuenciaDeLista(mejorAlineamientoQueSigue[1], listaSecuencias) #sacamos a la secuencia elegida de la lista de secuencias
     end
 
-    return (score, profileOriginal) #falta alineamiento, hay que ir armandolo en cada pasada del while (funcion reconstruccion_top_down)
+    return Result(profileOriginal, score) #falta alineamiento, hay que ir armandolo en cada pasada del while (funcion reconstruccion_top_down)
 end
 
 function encontrarMejorParInicial(secuencias, matrizDeCostoEIndices)
