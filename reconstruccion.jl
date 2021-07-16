@@ -1,3 +1,4 @@
+
 include("profile.jl")
 function reconstruccion_top_down(profile, str2,  W)
 
@@ -27,7 +28,7 @@ function reconstruccion_top_down(profile, str2,  W)
 
                     else
                         alineado_2 = alineado_2[1:n-1] * "-" * alineado_2[n:end]
-                        
+
                     end
 
                     m -= 1
