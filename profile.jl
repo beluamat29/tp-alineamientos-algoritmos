@@ -36,13 +36,8 @@ function actualizarProfile(profile, cadena) #devuelve un nuevo profile con los p
             stringCadena = join(cadenaColumna) #uno la columna del perfil ej "ACG"
             indiceCaracterExistente = findfirst(nuevoCaracterAAgregar, stringCadena) #encuentro el indice del caracter
             nuevosPorcentajesColumna[indiceCaracterExistente[1]] = nuevosPorcentajesColumna[indiceCaracterExistente[1]] + 0.5 #actualizo el porcentaje en ese indice
-
+            nuevaCadenaColumna = cadenaColumna
             ###ACTUALIZACION DE COLUMNA DE LETRAS
-            if(nuevoCaracterAAgregar === cadenaColumna[end]) #Si es igual al ultimo agregado
-                nuevaCadenaColumna = cadenaColumna
-            else
-                nuevaCadenaColumna = push!(cadenaColumna, nuevoCaracterAAgregar) #agrego la letra
-            end
         else
             nuevosPorcentajesColumna = push!(nuevosPorcentajesColumna, 0.5) #agrego el nuevo porcentaje
             nuevaCadenaColumna = push!(cadenaColumna, nuevoCaracterAAgregar) #agrego la letra
