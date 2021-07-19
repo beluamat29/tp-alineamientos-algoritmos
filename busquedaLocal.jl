@@ -1,9 +1,9 @@
 include("profile.jl")
 include("result.jl")
 include("needleman.jl")
-include("algoritmo greedy.jl")
-include("algoritmo greedy random.jl")
-include("matrices de costo.jl")
+include("algoritmo_greedy.jl")
+include("algoritmo_greedy_random.jl")
+include("matrices_de_costo.jl")
 #buscaremos en tantas vecindades como cantidadMaximaDeIteracionesPorVecindario veces
 #haremos tantos cambios de gaps como (cantidadDeFilas del profile)^2
 function busquedaLocal(resultado, cantidadMaximaDeIteracionesPorVecindario, matrizDeScores)

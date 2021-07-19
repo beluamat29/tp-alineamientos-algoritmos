@@ -1,10 +1,9 @@
 include("profile.jl")
 include("needleman.jl")
 include("reconstruccion.jl")
-include("matrices de costo.jl")
 include("cadena.jl")
 include("result.jl")
-include("matrices de costo.jl")
+include("matrices_de_costo.jl")
 
 using(Combinatorics)
 
