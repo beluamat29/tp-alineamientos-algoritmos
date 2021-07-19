@@ -1,5 +1,6 @@
-include("matrices de costo.jl")
-include("algoritmo greedy random.jl")
+include("matrices_de_costo.jl")
+include("algoritmo_greedy_random.jl")
+include("busquedaLocal.jl")
 
 function grasp(secuencias, limiteIteracionesSinMejora, cantidadIteracionesMaximas, cantMejorasBusquedaLocal)
     matriz = matrizDeAminoacidos()
