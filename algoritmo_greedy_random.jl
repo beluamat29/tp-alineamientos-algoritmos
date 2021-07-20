@@ -5,10 +5,12 @@ include("algoritmo_greedy.jl")
 include("result.jl")
 include("cadena.jl")
 include("matrices_de_costo.jl")
+include("parseo_de_cadenas.jl")
 
 using(Combinatorics)
 
-function algoritmoGreedyRandom(secuencias, matrizDeCostoEIndices, randomTake) #largo(secuencias) debe ser >= 2
+function algoritmoGreedyRandom(archivoSecuencias, matrizDeCostoEIndices, randomTake) #largo(secuencias) debe ser >= 2
+    secuencias = parsearListaDeCadenas(archivoSecuencias)
     primerasNMejores = encontrarNMejoresPares(secuencias, length(secuencias)/randomTake, matrizDeCostoEIndices) #me quedo con la mejor mitad
     primerParRandom = primerasNMejores[rand(1:end)] #elijo un par al azar dentro de los mejores
 
@@ -18,7 +20,7 @@ function algoritmoGreedyRandom(secuencias, matrizDeCostoEIndices, randomTake) #l
     profileInicial = armarProfileInicial(primerParRandom, matrizDeCostoEIndices)
     profile = profileInicial[2] #profile con el que arranca el algoritmo
     score = 0
-    while(length(listaDeSecuencias) > 1) #mientras quede mas de una secuencia por alinear
+    while(listaDeSecuencias != []) #mientras quede mas de una secuencia por alinear
         mejoresSecuencias = encontrarNMejoresSecuencias(listaDeSecuencias, profile, length(listaDeSecuencias)/randomTake, matrizDeCostoEIndices)
         lProfile = largoProfile(profile)
         cadenaString2 = (mejoresSecuencias[rand(1:end)])
@@ -89,17 +91,4 @@ function encontrarNMejoresSecuencias(listaDeSecuencias, profile, cantidad, matri
     return mejoresSecuencias
 end
 
-p = algoritmoGreedyRandom([
-Cadena("LCQGTSNKLTQLGTFEDHFLSLRRMFNNCEVVLGNLEITYVQKNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNMYYENSYALAVLSNYGTNKSGLRELPMRSLQEVL"),
-Cadena("VCQGTSNRLTQLGTFEDHFLSLQRMFNNCEVVLGNLEITYMQRNYDLSFLKTIQEVAGYVLIALNTVEKIPLENLQIIRGNVLYENTHALSVLSNYGSNKTGLQELPLRNLHEIL"),
-Cadena("IILVQICQGTSNRLTQLGTFEDHFLSLQRMFNNCEVVLGNLEITYMQKNYDLSFLKTIQEVAGYVLIALNTVEKIPLENLQIIRGNVLYENTHALSVLSNYGANKVGLRELPMRNLQEIL"),
-Cadena("FCQGTSNKLTQLGTFEDHFLSLQRMFNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNLLYENTYALAVLSNYGANKTGVKELPMRNLQEIL"),
-Cadena("VCQGTSNKLTQLGTFEDHFLSLQRMFNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNMYYENSYALAVLSNYDANKTGLKELPMRNLQEIL"),
-Cadena("LEEKKVCQGTSNKLTQLGTFEDHFLSLQRMFNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNMYYENSYALAVLSNYDANKTGLKELPMRNLQEIL"),
-Cadena("MFNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNMYYENSYALAVLSNYDANKTGLKELPMRNLQEIL"),
-Cadena("LEEKKVCQGTSNKLTQLGTFEDHFLSLQRMFNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNMYYENSYALAVLSNYDANKTGLKELPMRNLQEIL"),
-Cadena("MFNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNMYYENSYALAVLSNYDANKTGLKELPMRNLQEIL"),
-Cadena("LEEKKVCQGTSNKLTQLGTFEDHFLSLQRMFNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNTVERIPLENLQIIRGNMYYENSYALAVLSNYDANKTGLKELPMRNLQEIL"),
-Cadena("FLPSLVCQGTSNKLTQLGTFEDHFVSLQRMFNNCEVVLGNLEITYVQKNYDLSFLKTIQEVAGYVLIALNAVEKIPLENLQVIRGNVLYENFYALSVLSNYDVNKTGVKELPMRNLLEIL"),
-Cadena("LASGICQGTGNKLTQLGTLDDHFLSLQRMYNNCEVVLGNLEITYVQRNYDLSFLKTIQEVAGYVLIALNSVETIPLVNLQIIRGNVLYEGFALAVLSNYGMNKTGLKELPMRNLLEIL")
-], matrizDeAminoacidos(), 1.5)
+p = algoritmoGreedyRandom("archivo_de_cadenas.txt", matrizDeAminoacidos(), 1.5)
