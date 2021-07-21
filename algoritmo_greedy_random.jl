@@ -37,26 +37,25 @@ end
 
 function encontrarNMejoresPares(secuencias, cantidadMejores, matrizDeCostoEIndices)
     listaDePares = collect(combinations(secuencias, 2)) #formo todos los pares
-    mejoresPares = [] #aun no tengo mi mejor par
+    paresConResultados = []
 
-    while(length(mejoresPares) < cantidadMejores) #tengo que buscar al mejor par pero N veces
-        mejorPar = nothing
-        scoreMejorPar = typemin(Float64)
+    for par in listaDePares
+        profilePar = inicializarProfile(par[1].valorCadena) #inicializo un nuevo profile con el primer elemento de cada par
+        string2 = par[2].valorCadena #uso al segundo elemento de cada par como cadena
+        lProfile = largoProfile(profilePar)
+        W = fill(typemin(Float64), lProfile, length(string2))
+        scorePar = needle_top_down(profilePar, string2, lProfile, length(string2), W, matrizDeCostoEIndices) #averiguo el score de este par
+        paresConResultados = push!(paresConResultados, (par, scorePar))
+    end
 
-        for par in listaDePares
-            profilePar = inicializarProfile(par[1].valorCadena) #inicializo un nuevo profile con el primer elemento de cada par
-            string2 = par[2].valorCadena #uso al segundo elemento de cada par como cadena
-            lProfile = largoProfile(profilePar)
-            W = fill(typemin(Float64), lProfile, length(string2))
-            scorePar = needle_top_down(profilePar, string2, lProfile, length(string2), W, matrizDeCostoEIndices) #averiguo el score de este par
-            if(scorePar >= scoreMejorPar) #si el score es mejor que el que ya tenia, actualizo
-                mejorPar = par
-                scoreMejorPar = scorePar
-            end
-        end
+    paresConResultados = sort!(paresConResultados, by = parConResultado -> parConResultado[2])
 
-        mejoresPares = push!(mejoresPares, (mejorPar[1], mejorPar[2])) #agrego el par encontrado
-        listaDePares = eliminarParDeListaDePares(mejorPar, listaDePares) #saco el par que ya sume al resultado
+    mejoresPares = []
+
+    tomados = 1
+    while(tomados < cantidadMejores)
+        mejoresPares = push!(mejoresPares, paresConResultados[tomados][1]) #tomo los cantidadMejores pares
+        tomados += 1
     end
 
     return mejoresPares #retorno los cantidadMejores pares

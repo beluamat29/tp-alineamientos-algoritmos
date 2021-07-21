@@ -69,6 +69,6 @@ end
 
 result = grasp("archivo_de_cadenas.txt",
 "achivo_resultado.txt",
-1,
-2
+10,
+10
 )

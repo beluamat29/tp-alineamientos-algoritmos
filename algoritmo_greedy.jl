@@ -4,6 +4,7 @@ include("reconstruccion.jl")
 include("cadena.jl")
 include("result.jl")
 include("matrices_de_costo.jl")
+include("parseo_de_cadenas.jl")
 
 using(Combinatorics)
 
