@@ -1,8 +1,9 @@
 include("matrices_de_costo.jl")
 include("algoritmo_greedy_random.jl")
 include("busquedaLocal.jl")
+include("grasp_version2.jl")
 
-function grasp(nombreArchivoCadenas, limiteIteracionesSinMejora, cantidadIteracionesMaximas, cantMejorasBusquedaLocal)
+function grasp(nombreArchivoCadenas, nombreArchivoResultado, limiteIteracionesSinMejora, cantidadIteracionesMaximas, cantMejorasBusquedaLocal)
     matriz = matrizDeAminoacidos()
     iteracionesSinMejora = 0
     iteracion = 0
@@ -35,10 +36,12 @@ function grasp(nombreArchivoCadenas, limiteIteracionesSinMejora, cantidadIteraci
         println(mejorScore)
     end
 
+    guardarResultadoEnArchivo(mejorResultado, nombreArchivoResultado)
     return mejorResultado
 end
 
 grasp("archivo_de_cadenas.txt",
+"achivo_resultado.txt",
 10,
 20,
 10
